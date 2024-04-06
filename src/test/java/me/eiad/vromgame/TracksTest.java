@@ -3,7 +3,6 @@ package me.eiad.vromgame;
 import me.eiad.vromgame.exeptions.LengthShouldBePositiveNumber;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 public class TracksTest {
 
     @Test

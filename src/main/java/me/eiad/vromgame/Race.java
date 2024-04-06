@@ -1,60 +1,52 @@
 package me.eiad.vromgame;
 
 import lombok.Getter;
-import lombok.Setter;
 import me.eiad.vromgame.rules.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Getter
-@Setter
 public class Race {
     private final List<Car> cars;
-    private final int round;
+    private final int numberOfRounds;
     private final List<Track> tracks;
     private final List<Rule> rules = new ArrayList<>();
+    private List<Integer> rounds = new ArrayList<>();
 
     public Race(List<Car> cars, int round, List<Track> tracks) {
-        this.cars = cars;
-        this.round = round;
-        this.tracks = tracks;
         rules.add(new NumberOfCarsValidation());
         rules.add(new RoundValidation());
         rules.add(new TrackValidation());
+        this.cars = cars;
+        this.numberOfRounds = round;
+        this.tracks = tracks;
+        checkIfValid();
     }
 
-    public void addRule(Rule rule){
-        rules.add(rule);
+    public List<Car> start(List<Car> cars, int numberOfRounds, List<Track> tracks) {
+        List<Car> winners = new ArrayList<>();
+        rounds = roundSetUp(numberOfRounds);
+        for (Integer round : rounds) {
+            winners = startRound(cars, round, tracks.get(0));
+        }
+        return winners;
     }
 
-    public ValidationResults checkIfValid() {
-        ValidationResults validationResults = new ValidationResults();
+    private List<Integer> roundSetUp(int round) {
+        for (int i = 1; i <= round; i++) {
+            rounds.add(i);
+        }
+        return rounds;
+    }
+
+    private void checkIfValid() {
         for (Rule rule : rules) {
-            ValidationResult result = rule.isValid(this);
-            if(!result.isValid())
-                validationResults.add(result);
+            rule.isValid(this);
         }
-        return validationResults;
     }
 
-    public void start(List<Car> cars, int round, List<Track> tracks) {
-
-    }
-
-    private Map<Integer, Integer> roundSetUp(Round round) {
-        Map<Integer, Integer> result = new HashMap<>();
-        int reward = 100;
-        int number = round.getRoundNumber();
-        for (int i = 1; i < number; i++) {
-            if (result.isEmpty()) {
-                result.put(i, reward);
-            }
-            Integer oldReward = result.get(i);
-            result.put(i, oldReward + 50);
-        }
-        return result;
+    private List<Car> startRound(List<Car> cars, int numberOfRound, Track track) {
+        return cars;
     }
 }

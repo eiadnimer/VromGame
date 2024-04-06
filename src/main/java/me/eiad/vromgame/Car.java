@@ -22,13 +22,14 @@ public class Car {
 
     private void validate(int topSpeed, int acceleration, int wormUpTime) {
         if (topSpeed < 0) {
-            throw new TopSpeedShouldBePositive("there is no speed in minus");
+            throw new TopSpeedShouldBePositive();
         }
         if (acceleration < 0) {
-            throw new AccelerationShouldBePositive("acceleration should be positive number ");
+            throw new AccelerationShouldBePositive();
         }
         if (wormUpTime < 0) {
-            throw new TimeIsMinus("there is no time in minus");
+            throw new TimeIsMinus();
         }
     }
+
 }

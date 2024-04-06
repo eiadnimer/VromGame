@@ -1,17 +1,17 @@
 package me.eiad.vromgame.rules;
-
-
-
 import me.eiad.vromgame.Car;
 import me.eiad.vromgame.Race;
 import me.eiad.vromgame.exeptions.CarsShouldBeMoreThanOneCar;
-
 import java.util.List;
 
 public class NumberOfCarsValidation implements Rule {
     @Override
-    public ValidationResult isValid(Race race) {
+    public void isValid(Race race) {
         List<Car> cars = race.getCars();
+        validate(cars);
+    }
+
+    private void validate(List<Car> cars) {
         if (cars == null) {
             throw new CarsShouldBeMoreThanOneCar();
         }
@@ -21,6 +21,5 @@ public class NumberOfCarsValidation implements Rule {
         if (cars.size() < 2) {
             throw new CarsShouldBeMoreThanOneCar();
         }
-        return new ValidationResult(true, "number of cars is not correct");
     }
 }
