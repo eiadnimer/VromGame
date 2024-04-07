@@ -1,10 +1,12 @@
-package me.eiad.vromgame;
+package me.eiad.vromgame.core;
 
 import lombok.Getter;
 import lombok.Setter;
 import me.eiad.vromgame.exeptions.AccelerationShouldBePositive;
 import me.eiad.vromgame.exeptions.TimeIsMinus;
 import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;
+
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -32,4 +34,16 @@ public class Car {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Car car = (Car) o;
+        return topSpeed == car.topSpeed && acceleration == car.acceleration && wormUpTime == car.wormUpTime;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(topSpeed, acceleration, wormUpTime);
+    }
 }

@@ -1,6 +1,6 @@
 package me.eiad.vromgame.rules;
-import me.eiad.vromgame.Car;
-import me.eiad.vromgame.Race;
+import me.eiad.vromgame.core.Car;
+import me.eiad.vromgame.core.Race;
 import me.eiad.vromgame.exeptions.CarsShouldBeMoreThanOneCar;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package me.eiad.vromgame;
+package me.eiad.vromgame.core;
 
 import lombok.Getter;
 import me.eiad.vromgame.exeptions.LengthShouldBePositiveNumber;

@@ -1,5 +1,6 @@
 package me.eiad.vromgame;
 
+import me.eiad.vromgame.core.Car;
 import me.eiad.vromgame.exeptions.AccelerationShouldBePositive;
 import me.eiad.vromgame.exeptions.TimeIsMinus;
 import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;

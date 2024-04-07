@@ -1,4 +1,8 @@
 package me.eiad.vromgame;
+
+import me.eiad.vromgame.core.Car;
+import me.eiad.vromgame.core.Race;
+import me.eiad.vromgame.core.Track;
 import me.eiad.vromgame.exeptions.CarsShouldBeMoreThanOneCar;
 import me.eiad.vromgame.exeptions.RoundsShouldNotBeLessThanTwo;
 import me.eiad.vromgame.exeptions.TracksShouldBeMoreThanOneTrack;
@@ -7,10 +11,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RaceTest {
-    private final Car carA = new Car(200, 20, 2);
-    private final Car carB = new Car(200, 20, 2);
+    private final Car carA = new Car(200, 10, 3);
+    private final Car carB = new Car(220, 2, 2);
     private final Track trackA = new Track(100);
     private final Track trackB = new Track(200);
 
@@ -63,10 +68,20 @@ public class RaceTest {
     }
 
     @Test
-    public void after_first_round_finished_must_return_list_of_cars() {
+    public void each_round_must_have_different_track() {
+        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
+        race.start(List.of(carA, carB), 2, List.of(trackA, trackB));
+
+        Map<Integer, Track> map = race.getRandomPicks();
+
+        Assertions.assertNotEquals(map.get(1), map.get(2));
+    }
+
+    @Test
+    public void make_sure_that_the_fastest_car_is_the_car_with_less_time_to_finish_the_track() {
         Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
         List<Car> cars = race.start(List.of(carA, carB), 2, List.of(trackA, trackB));
 
-        Assertions.assertEquals(List.of(carA, carB), cars);
+        Assertions.assertEquals(cars.get(0), race.getWinner());
     }
 }

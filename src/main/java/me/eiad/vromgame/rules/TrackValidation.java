@@ -1,5 +1,5 @@
 package me.eiad.vromgame.rules;
-import me.eiad.vromgame.Race;
+import me.eiad.vromgame.core.Race;
 import me.eiad.vromgame.exeptions.TracksShouldBeMoreThanOneTrack;
 
 public class TrackValidation implements Rule {
