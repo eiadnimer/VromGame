@@ -1,45 +1,38 @@
 package me.eiad.vromgame.core;
+
 import lombok.Getter;
 import me.eiad.vromgame.rules.*;
+
 import java.util.*;
+
 @Getter
 public class Race {
     private final List<Car> cars;
-    private final int numberOfRounds;
+    private final List<Round> rounds;
     private final List<Track> tracks;
     private final List<Rule> rules = new ArrayList<>();
-    private List<Integer> rounds = new ArrayList<>();
-    private Map<Integer, Track> randomPicks = new HashMap<>();
-    private List<Car> resultOfTrack = new ArrayList<>();
+    private Map<Round, Track> randomPicks = new HashMap<>();
+    private List<Car> resultOfRound = new ArrayList<>();
     private final Map<Car, Double> timeForEachCar = new HashMap<>();
     private Car winner;
 
-    public Race(List<Car> cars, int round, List<Track> tracks) {
+    public Race(List<Car> cars, List<Round> rounds, List<Track> tracks) {
         rules.add(new NumberOfCarsValidation());
         rules.add(new RoundValidation());
         rules.add(new TrackValidation());
         this.cars = cars;
-        this.numberOfRounds = round;
+        this.rounds = rounds;
         this.tracks = tracks;
         checkIfValid();
     }
 
-    public List<Car> start(List<Car> cars, int numberOfRounds, List<Track> tracks) {
-        rounds = roundSetUp(numberOfRounds);
+    public List<Car> start() {
         randomPicks = getRandomPick(rounds, tracks);
-        for (Integer round : rounds) {
+        for (Round round : rounds) {
             Track track = randomPicks.get(round);
-            resultOfTrack = startRound(track, cars);
+            resultOfRound = startRound(track, cars);
         }
-
-        return resultOfTrack;
-    }
-
-    private List<Integer> roundSetUp(int round) {
-        for (int i = 1; i <= round; i++) {
-            rounds.add(i);
-        }
-        return rounds;
+        return resultOfRound;
     }
 
     private void checkIfValid() {
@@ -60,7 +53,7 @@ public class Race {
         return result;
     }
 
-    private Map<Integer, Track> getRandomPick(List<Integer> rounds, List<Track> tracks) {
+    private Map<Round, Track> getRandomPick(List<Round> rounds, List<Track> tracks) {
         List<Track> shuffledTracks = customShuffle(tracks);
         for (int i = 0; i < rounds.size(); i++) {
             randomPicks.put(rounds.get(i), shuffledTracks.get(i));
