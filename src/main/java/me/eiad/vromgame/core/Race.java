@@ -9,12 +9,16 @@ import java.util.*;
 public class Race {
     private final List<Car> cars;
     private final List<Round> rounds;
-    private final List<Track> tracks;
+    private List<Track> tracks;
     private final List<Rule> rules = new ArrayList<>();
     private Map<Round, Track> randomPicks = new HashMap<>();
     private List<Car> resultOfRound = new ArrayList<>();
     private final Map<Car, Double> timeForEachCar = new HashMap<>();
     private Car winner;
+    private final Map<Car, Integer> winners = new HashMap<>();
+    private Track pickedTrack;
+    private List<Car> losingCars = new ArrayList<>();
+
 
     public Race(List<Car> cars, List<Round> rounds, List<Track> tracks) {
         rules.add(new NumberOfCarsValidation());
@@ -27,10 +31,15 @@ public class Race {
     }
 
     public List<Car> start() {
-        randomPicks = getRandomPick(rounds, tracks);
+        int roundCount = 1;
+        randomPicks = getRandomPick();
         for (Round round : rounds) {
-            Track track = randomPicks.get(round);
-            resultOfRound = startRound(track, cars);
+            pickedTrack = randomPicks.get(round);
+            resultOfRound = round.start(cars);
+            winner = resultOfRound.get(0);
+            winners.put(winner, roundCount);
+            losingCars = getLosingCars(round);
+            roundCount++;
         }
         return resultOfRound;
     }
@@ -41,22 +50,10 @@ public class Race {
         }
     }
 
-    private List<Car> startRound(Track track, List<Car> cars) {
-        for (Car car : cars) {
-            double finalResult = timeToFinish(car, track.getLength());
-            timeForEachCar.put(car, finalResult);
-        }
-        List<Car> result = timeForEachCar.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey).toList();
-        winner = result.get(0);
-        return result;
-    }
-
-    private Map<Round, Track> getRandomPick(List<Round> rounds, List<Track> tracks) {
-        List<Track> shuffledTracks = customShuffle(tracks);
+    private Map<Round, Track> getRandomPick() {
+        tracks = customShuffle(tracks);
         for (int i = 0; i < rounds.size(); i++) {
-            randomPicks.put(rounds.get(i), shuffledTracks.get(i));
+            randomPicks.put(rounds.get(i), tracks.get(i));
         }
         return randomPicks;
     }
@@ -73,10 +70,19 @@ public class Race {
         return result;
     }
 
-    private double timeToFinish(Car car, int length) {
-        double timeToTopSpeed = (double) car.getTopSpeed() / car.getAcceleration();
-        double distanceAtTopSpeed = (double) car.getTopSpeed() * timeToTopSpeed;
-        double timeAtTopSpeed = (length - distanceAtTopSpeed) / car.getTopSpeed();
-        return timeToTopSpeed + timeAtTopSpeed + car.getWormUpTime();
+    public List<Car> getLosingCars(Round round) {
+        Map<Car, Double> result = round.GetDistance(cars);
+        List<Double> distances = result.values().stream().toList();
+        for (Double distance : distances) {
+            if (distance < pickedTrack.getLength()) {
+                Car car = result.entrySet().stream()
+                        .filter(entry -> Objects.equals(entry.getValue(), pickedTrack.getLength()))
+                        .map(Map.Entry::getKey)
+                        .findFirst()
+                        .orElse(null);
+                losingCars.add(car);
+            }
+        }
+        return losingCars;
     }
 }

@@ -13,25 +13,47 @@ import java.util.Objects;
 public class Car {
     private int topSpeed;
     private int acceleration;
-    private int wormUpTime;
+    private double warmUpTime;
 
-    public Car(int topSpeed, int acceleration, int wormUpTime) {
+    public Car(int topSpeed, int acceleration, double wormUpTime) {
         validate(topSpeed, acceleration, wormUpTime);
         this.topSpeed = topSpeed;
         this.acceleration = acceleration;
-        this.wormUpTime = wormUpTime;
+        this.warmUpTime = wormUpTime;
     }
 
-    private void validate(int topSpeed, int acceleration, int wormUpTime) {
+    private void validate(int topSpeed, int acceleration, double warmUpTime) {
         if (topSpeed < 0) {
             throw new TopSpeedShouldBePositive();
         }
         if (acceleration < 0) {
             throw new AccelerationShouldBePositive();
         }
-        if (wormUpTime < 0) {
+        if (warmUpTime < 0) {
             throw new TimeIsMinus();
         }
+    }
+
+    protected double GetDistance(double roundTime) {
+        double distanceCovered = 0;
+        for (double time = 1; time <= roundTime; time++) {
+            double distanceThisSecond;
+            if (time <= warmUpTime) {
+                distanceThisSecond = 0;
+            } else {
+                double timeAtTopSpeed = time - warmUpTime;
+                if (timeAtTopSpeed <= (2 * topSpeed / acceleration)) {
+                    distanceThisSecond = (topSpeed * timeAtTopSpeed - 0.5 * acceleration * Math.pow(timeAtTopSpeed, 2));
+                } else {
+                    distanceThisSecond = (topSpeed * (2 * topSpeed / acceleration)
+                            - 0.5 * acceleration * Math.pow(2 * topSpeed / acceleration, 2)
+                            + topSpeed * (timeAtTopSpeed - 2 * topSpeed / acceleration));
+                }
+            }
+            distanceCovered += distanceThisSecond;
+
+        }
+        return distanceCovered;
     }
 
     @Override
@@ -39,11 +61,11 @@ public class Car {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Car car = (Car) o;
-        return topSpeed == car.topSpeed && acceleration == car.acceleration && wormUpTime == car.wormUpTime;
+        return topSpeed == car.topSpeed && acceleration == car.acceleration && warmUpTime == car.warmUpTime;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(topSpeed, acceleration, wormUpTime);
+        return Objects.hash(topSpeed, acceleration, warmUpTime);
     }
 }
