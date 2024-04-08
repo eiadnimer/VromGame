@@ -86,6 +86,4 @@ public class RaceTest {
 
         Assertions.assertFalse(losingCars.isEmpty());
     }
-
-
 }

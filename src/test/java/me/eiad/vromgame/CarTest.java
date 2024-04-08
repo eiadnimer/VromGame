@@ -26,4 +26,6 @@ public class CarTest {
         Assertions.assertThrows(TimeIsMinus.class,
                 () -> new Car(200, 50, -2));
     }
+
+
 }

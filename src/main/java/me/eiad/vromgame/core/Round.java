@@ -1,5 +1,6 @@
 package me.eiad.vromgame.core;
 
+import me.eiad.vromgame.exeptions.CarsShouldBeMoreThanOneCar;
 import me.eiad.vromgame.exeptions.TimeIsMinus;
 
 import java.util.HashMap;
@@ -17,6 +18,9 @@ public class Round {
     }
 
     public List<Car> start(List<Car> cars) {
+        if (cars == null){
+            throw new CarsShouldBeMoreThanOneCar();
+        }
         return GetDistance(cars).entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey).toList();
