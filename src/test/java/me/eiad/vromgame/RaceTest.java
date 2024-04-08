@@ -78,7 +78,7 @@ public class RaceTest {
     }
 
     @Test
-    public void if_all_cars_not_finish_the_round_within_round_time_must_return_true() {
+    public void if_all_cars_not_finish_the_round_within_round_time_must_return_false() {
         Race race = new Race((List.of(carA, carB)), List.of(round1, round2), List.of(trackA, trackB));
         race.start();
 
@@ -86,4 +86,6 @@ public class RaceTest {
 
         Assertions.assertFalse(losingCars.isEmpty());
     }
+
+
 }
