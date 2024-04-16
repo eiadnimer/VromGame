@@ -5,7 +5,6 @@ import lombok.Setter;
 import me.eiad.vromgame.exeptions.AccelerationShouldBePositive;
 import me.eiad.vromgame.exeptions.TimeIsMinus;
 import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;
-
 import java.util.Objects;
 
 @Getter
@@ -34,26 +33,12 @@ public class Car {
         }
     }
 
-    protected double GetDistance(double roundTime) {
-        double distanceCovered = 0;
-        for (double time = 1; time <= roundTime; time++) {
-            double distanceThisSecond;
-            if (time <= warmUpTime) {
-                distanceThisSecond = 0;
-            } else {
-                double timeAtTopSpeed = time - warmUpTime;
-                if (timeAtTopSpeed <= (2 * topSpeed / acceleration)) {
-                    distanceThisSecond = (topSpeed * timeAtTopSpeed - 0.5 * acceleration * Math.pow(timeAtTopSpeed, 2));
-                } else {
-                    distanceThisSecond = (topSpeed * (2 * topSpeed / acceleration)
-                            - 0.5 * acceleration * Math.pow(2 * topSpeed / acceleration, 2)
-                            + topSpeed * (timeAtTopSpeed - 2 * topSpeed / acceleration));
-                }
-            }
-            distanceCovered += distanceThisSecond;
-
-        }
-        return distanceCovered;
+    protected double getTime(double trackLength) {
+        double timeToTopSpeed = (topSpeed - 0) / acceleration;
+        double distanceDuringAcceleration = 0.5 * acceleration * timeToTopSpeed * timeToTopSpeed;
+        double distanceRemaining = trackLength - distanceDuringAcceleration;
+        double timeAtTopSpeed = distanceRemaining / topSpeed;
+        return timeToTopSpeed + timeAtTopSpeed + warmUpTime;
     }
 
     @Override

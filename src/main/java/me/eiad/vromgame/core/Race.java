@@ -7,20 +7,18 @@ import java.util.*;
 
 @Getter
 public class Race {
+    private final Random random = new Random();
     private final List<Car> cars;
-    private final List<Round> rounds;
-    private List<Track> tracks;
+    private final int rounds;
+    private final List<Track> tracks;
     private final List<Rule> rules = new ArrayList<>();
-    private Map<Round, Track> randomPicks = new HashMap<>();
-    private List<Car> resultOfRound = new ArrayList<>();
-    private final Map<Car, Double> timeForEachCar = new HashMap<>();
+    private int roundNumber = 0;
+    private final Map<Car, Double> resultOfRound = new HashMap<>();
+    private final Map<Integer, Map<Car, Double>> resultOfRace = new HashMap<>();
+    private Car loser;
     private Car winner;
-    private final Map<Car, Integer> winners = new HashMap<>();
-    private Track pickedTrack;
-    private List<Car> losingCars = new ArrayList<>();
 
-
-    public Race(List<Car> cars, List<Round> rounds, List<Track> tracks) {
+    public Race(List<Car> cars, int rounds, List<Track> tracks) {
         rules.add(new NumberOfCarsValidation());
         rules.add(new RoundValidation());
         rules.add(new TrackValidation());
@@ -30,18 +28,20 @@ public class Race {
         checkIfValid();
     }
 
-    public List<Car> start() {
-        int roundCount = 1;
-        randomPicks = getRandomPick();
-        for (Round round : rounds) {
-            pickedTrack = randomPicks.get(round);
-            resultOfRound = round.start(cars);
-            winner = resultOfRound.get(0);
-            winners.put(winner, roundCount);
-            losingCars = getLosingCars(round);
-            roundCount++;
-        }
+    public Map<Car, Double> start() {
+        startRound();
         return resultOfRound;
+    }
+
+    private void startRound() {
+        int randomIndex = random.nextInt(tracks.size());
+        Track pickedTrack = tracks.get(randomIndex);
+        for (Car car : cars) {
+            double carTime = car.getTime(pickedTrack.getLength());
+            roundNumber++;
+            resultOfRound.put(car, carTime);
+            resultOfRace.put(roundNumber, resultOfRound);
+        }
     }
 
     private void checkIfValid() {
@@ -50,39 +50,35 @@ public class Race {
         }
     }
 
-    private Map<Round, Track> getRandomPick() {
-        tracks = customShuffle(tracks);
-        for (int i = 0; i < rounds.size(); i++) {
-            randomPicks.put(rounds.get(i), tracks.get(i));
-        }
-        return randomPicks;
-    }
-
-    private List<Track> customShuffle(List<Track> tracks) {
-        List<Track> result = new ArrayList<>(tracks);
-        Random random = new Random();
-        for (int i = tracks.size() - 1; i > 0; i--) {
-            int j = random.nextInt(i + 1);
-            Track temp = tracks.get(i);
-            result.set(i, tracks.get(j));
-            result.set(j, temp);
-        }
-        return result;
-    }
-
-    public List<Car> getLosingCars(Round round) {
-        Map<Car, Double> result = round.GetDistance(cars);
-        List<Double> distances = result.values().stream().toList();
-        for (Double distance : distances) {
-            if (distance < pickedTrack.getLength()) {
-                Car car = result.entrySet().stream()
-                        .filter(entry -> Objects.equals(entry.getValue(), pickedTrack.getLength()))
-                        .map(Map.Entry::getKey)
-                        .findFirst()
-                        .orElse(null);
-                losingCars.add(car);
+    public Car getLoser(int roundNumber) {
+        Map<Car, Double> resultOfRound = resultOfRace.get(roundNumber);
+        double maximum = 0;
+        for (Double carTime : resultOfRound.values()) {
+            if (carTime > maximum) {
+                maximum = carTime;
             }
         }
-        return losingCars;
+        for (Map.Entry<Car, Double> entry : resultOfRound.entrySet()) {
+            if (Objects.equals(entry.getValue(), maximum)) {
+                loser = entry.getKey();
+            }
+        }
+        return loser;
+    }
+
+    public Car getWinner(int roundNumber) {
+        Map<Car, Double> resultOfRound = resultOfRace.get(roundNumber);
+        double minimum = Integer.MAX_VALUE;
+        for (Double carTime : resultOfRound.values()) {
+            if (carTime < minimum) {
+                minimum = carTime;
+            }
+        }
+        for (Map.Entry<Car, Double> entry : resultOfRound.entrySet()) {
+            if (Objects.equals(entry.getValue(), minimum)) {
+                winner = entry.getKey();
+            }
+        }
+        return winner;
     }
 }
