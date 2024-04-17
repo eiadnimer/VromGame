@@ -9,18 +9,17 @@ import java.util.*;
 @Getter
 public class Race {
 
-    // remove result of round
-    // carTime should not be saved
     private final Random random = new Random();
     private final List<Car> cars;
     private final int rounds;
     private final List<Track> tracks;
     private final List<Rule> rules = new ArrayList<>();
     private int roundNumber = 0;
-    private final Map<Car, Double> resultOfRound = new HashMap<>();
     private final Map<Integer, Map<Car, Double>> resultOfRace = new HashMap<>();
     private Car loser;
-    private Car winner;
+    private Car winnerOfRound;
+    private final List<Car> winners = new ArrayList<>();
+
 
     public Race(List<Car> cars, int rounds, List<Track> tracks) {
         rules.add(new NumberOfCarsValidation());
@@ -35,10 +34,11 @@ public class Race {
 
     public Map<Car, Double> start() {
         startRound();
-        return resultOfRound;
+        return resultOfRace.get(roundNumber);
     }
 
     private void startRound() {
+        Map<Car, Double> resultOfRound = new HashMap<>();
         int randomIndex = random.nextInt(tracks.size());
         Track pickedTrack = tracks.get(randomIndex);
         for (Car car : cars) {
@@ -71,7 +71,7 @@ public class Race {
         return loser;
     }
 
-    public Car getWinner(int number) {
+    public Car getWinnerOfRound(int number) {
         if (number > roundNumber) {
             throw new RoundsShouldStartsSequentially();
         }
@@ -84,9 +84,24 @@ public class Race {
         }
         for (Map.Entry<Car, Double> entry : resultOfRound.entrySet()) {
             if (Objects.equals(entry.getValue(), minimum)) {
-                winner = entry.getKey();
+                winnerOfRound = entry.getKey();
             }
         }
-        return winner;
+        return winnerOfRound;
+    }
+
+    public Car getWinner() {
+        Map<Car, Double> lastRound = resultOfRace.get(roundNumber);
+        double bestScore = Collections.min(lastRound.values());
+        for (Map.Entry<Car, Double> entry : lastRound.entrySet()) {
+            if (Objects.equals(entry.getValue(), bestScore)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private List<Car> getWinners(int roundNumber) {
+        return winners;
     }
 }

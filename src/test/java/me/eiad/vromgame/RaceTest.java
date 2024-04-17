@@ -75,7 +75,7 @@ public class RaceTest {
 
         Double carATime = result.get(carA);
         Double carBTime = result.get(carB);
-        Car winner = race.getWinner(1);
+        Car winner = race.getWinnerOfRound(1);
 
         Assertions.assertTrue(carATime < carBTime);
         Assertions.assertEquals(carA, winner);
@@ -83,7 +83,15 @@ public class RaceTest {
 
     @Test
     public void make_sure_that_the_loser_of_the_round_is_the_car_with_the_highest_time_to_finish_the_track() {
-        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
+        Car carC = new Car(330, 5, 3);
+        Car carD = new Car(220, 3, 2);
+        Car carE = new Car(260, 8, 1);
+        Car carF = new Car(300, 4, 2);
+        Track trackC = new Track(500);
+        Track trackD = new Track(2000);
+        Track trackE = new Track(2500);
+        Track trackF = new Track(2200);
+        Race race = new Race((List.of(carA, carB, carC, carD, carE, carF)), 4, List.of(trackA, trackB, trackC, trackD, trackE, trackF));
         Map<Car, Double> result = race.start();
 
         Double carATime = result.get(carA);
@@ -91,7 +99,7 @@ public class RaceTest {
         Car loser = race.getLoser(1);
 
         Assertions.assertTrue(carBTime > carATime);
-        Assertions.assertEquals(loser, carB);
+        Assertions.assertEquals(loser, carD);
     }
 
     @Test
@@ -100,6 +108,14 @@ public class RaceTest {
         race.start();
 
         Assertions.assertThrows(RoundsShouldStartsSequentially.class,
-                ()-> race.getWinner(3));
+                () -> race.getWinnerOfRound(3));
+    }
+
+    @Test
+    public void the_winner_for_the_race_is_the_winner_of_the_last_round_of_the_race() {
+        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
+        race.start();
+
+        Assertions.assertEquals(carA, race.getWinner());
     }
 }
