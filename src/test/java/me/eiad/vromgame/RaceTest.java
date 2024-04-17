@@ -75,7 +75,7 @@ public class RaceTest {
 
         Double carATime = result.get(carA);
         Double carBTime = result.get(carB);
-        Car winner = race.getWinnerOfRound(1);
+        Car winner = race.getWinnerOfRound(2);
 
         Assertions.assertTrue(carATime < carBTime);
         Assertions.assertEquals(carA, winner);
@@ -103,7 +103,7 @@ public class RaceTest {
     }
 
     @Test
-    public void cant_check_the_result_of_round_if_the_round_do_not_starts_yest() {
+    public void cant_check_the_result_of_round_if_the_round_do_not_starts_yet() {
         Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
         race.start();
 
@@ -117,5 +117,31 @@ public class RaceTest {
         race.start();
 
         Assertions.assertEquals(carA, race.getWinner());
+    }
+
+    @Test
+    public void winners_of_rounds_should_be_all_the_cars_except_the_last_car() {
+        Car carC = new Car(330, 5, 3);
+        Car carD = new Car(220, 3, 2);
+        Car carE = new Car(260, 8, 1);
+        Car carF = new Car(300, 4, 2);
+        Track trackC = new Track(500);
+        Track trackD = new Track(2000);
+        Track trackE = new Track(2500);
+        Track trackF = new Track(2200);
+        Race race = new Race((List.of(carA, carB, carC, carD, carE, carF)), 4, List.of(trackA, trackB, trackC, trackD, trackE, trackF));
+        race.start();
+
+        List<Car> winners = race.getWinnersOfRound(3);
+
+        Assertions.assertEquals(5, winners.size());
+    }
+
+    @Test
+    public void first_place_of_round_should_takes_65_form_the_points_for_this_round() {
+        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
+        race.start();
+
+        Assertions.assertEquals(100, carA.getUpgradePoints());
     }
 }

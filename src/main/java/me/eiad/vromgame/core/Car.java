@@ -13,6 +13,7 @@ public class Car {
     private int topSpeed;
     private int acceleration;
     private double warmUpTime;
+    private double upgradePoints;
 
     public Car(int topSpeed, int acceleration, double wormUpTime) {
         validate(topSpeed, acceleration, wormUpTime);

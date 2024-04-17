@@ -19,6 +19,7 @@ public class Race {
     private Car loser;
     private Car winnerOfRound;
     private final List<Car> winners = new ArrayList<>();
+    private final Map<Integer, Double> rewardsPoints = new HashMap<>();
 
 
     public Race(List<Car> cars, int rounds, List<Track> tracks) {
@@ -26,6 +27,16 @@ public class Race {
         rules.add(new RoundValidation());
         rules.add(new TrackValidation());
         rules.add(new CarsEqual());
+        rewardsPoints.put(1, 100.0);
+        rewardsPoints.put(2, 150.0);
+        rewardsPoints.put(3, 200.0);
+        rewardsPoints.put(4, 250.0);
+        rewardsPoints.put(5, 300.0);
+        rewardsPoints.put(6, 350.0);
+        rewardsPoints.put(7, 400.0);
+        rewardsPoints.put(8, 450.0);
+        rewardsPoints.put(9, 500.0);
+        rewardsPoints.put(10, 600.0);
         this.cars = cars;
         this.rounds = rounds;
         this.tracks = tracks;
@@ -101,7 +112,26 @@ public class Race {
         return null;
     }
 
-    private List<Car> getWinners(int roundNumber) {
+    public List<Car> getWinnersOfRound(int roundNumber) {
+        Map<Car, Double> resultOfRound = resultOfRace.get(roundNumber);
+        double lastPlace = Collections.max(resultOfRound.values());
+        for (Map.Entry<Car, Double> entry : resultOfRound.entrySet()) {
+            if (Objects.equals(entry.getValue(), lastPlace)) {
+                Car car = entry.getKey();
+                resultOfRound.remove(car);
+                break;
+            }
+        }
+        List<Car> winners = new ArrayList<>(resultOfRound.keySet());
+        winners.sort(Comparator.comparingDouble(resultOfRound::get));
         return winners;
+    }
+
+    private void segregatePoints() {
+        List<Car> winnerOfRound = getWinnersOfRound(roundNumber);
+        Double reward = rewardsPoints.get(roundNumber);
+        for (Car car : winnerOfRound) {
+            car.setUpgradePoints(reward);
+        }
     }
 }
