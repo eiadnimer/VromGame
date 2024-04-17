@@ -3,9 +3,7 @@ package me.eiad.vromgame;
 import me.eiad.vromgame.core.Car;
 import me.eiad.vromgame.core.Race;
 import me.eiad.vromgame.core.Track;
-import me.eiad.vromgame.exeptions.CarsShouldBeMoreThanOneCar;
-import me.eiad.vromgame.exeptions.RoundsShouldNotBeLessThanTwo;
-import me.eiad.vromgame.exeptions.TracksShouldBeMoreThanOneTrack;
+import me.eiad.vromgame.exeptions.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 public class RaceTest {
-    private final Car carA = new Car(200, 10, 0.5);
-    private final Car carB = new Car(220, 7, 1);
+    private final Car carA = new Car(200, 10, 1);
+    private final Car carB = new Car(220, 7, 2);
     private final Track trackA = new Track(3000);
     private final Track trackB = new Track(1000);
 
@@ -57,8 +55,22 @@ public class RaceTest {
     }
 
     @Test
+    public void you_cant_start_a_race_with_same_cars() {
+        Assertions.assertThrows(CarsShouldNotBeTheSame.class,
+                () -> new Race((List.of(carA, carA)), 2, List.of(trackA, trackB)));
+    }
+
+    @Test
     public void make_sure_that_the_winner_of_the_round_is_the_car_with_less_time_to_finish_the_track() {
-        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
+        Car carC = new Car(330, 5, 3);
+        Car carD = new Car(220, 3, 2);
+        Car carE = new Car(260, 8, 1);
+        Car carF = new Car(300, 4, 2);
+        Track trackC = new Track(500);
+        Track trackD = new Track(2000);
+        Track trackE = new Track(2500);
+        Track trackF = new Track(2200);
+        Race race = new Race((List.of(carA, carB, carC, carD, carE, carF)), 2, List.of(trackA, trackB, trackC, trackD, trackE, trackF));
         Map<Car, Double> result = race.start();
 
         Double carATime = result.get(carA);
@@ -66,11 +78,11 @@ public class RaceTest {
         Car winner = race.getWinner(1);
 
         Assertions.assertTrue(carATime < carBTime);
-        Assertions.assertEquals(carA,winner);
+        Assertions.assertEquals(carA, winner);
     }
 
     @Test
-    public void make_sure_that_the_loser_car_is_the_car_with_the_highest_time_to_finish_the_track() {
+    public void make_sure_that_the_loser_of_the_round_is_the_car_with_the_highest_time_to_finish_the_track() {
         Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
         Map<Car, Double> result = race.start();
 
@@ -79,8 +91,15 @@ public class RaceTest {
         Car loser = race.getLoser(1);
 
         Assertions.assertTrue(carBTime > carATime);
-        Assertions.assertEquals(loser,carB);
+        Assertions.assertEquals(loser, carB);
     }
 
+    @Test
+    public void cant_check_the_result_of_round_if_the_round_do_not_starts_yest() {
+        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
+        race.start();
 
+        Assertions.assertThrows(RoundsShouldStartsSequentially.class,
+                ()-> race.getWinner(3));
+    }
 }

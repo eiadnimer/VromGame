@@ -1,12 +1,16 @@
 package me.eiad.vromgame.core;
 
 import lombok.Getter;
+import me.eiad.vromgame.exeptions.RoundsShouldStartsSequentially;
 import me.eiad.vromgame.rules.*;
 
 import java.util.*;
 
 @Getter
 public class Race {
+
+    // remove result of round
+    // carTime should not be saved
     private final Random random = new Random();
     private final List<Car> cars;
     private final int rounds;
@@ -22,6 +26,7 @@ public class Race {
         rules.add(new NumberOfCarsValidation());
         rules.add(new RoundValidation());
         rules.add(new TrackValidation());
+        rules.add(new CarsEqual());
         this.cars = cars;
         this.rounds = rounds;
         this.tracks = tracks;
@@ -66,8 +71,11 @@ public class Race {
         return loser;
     }
 
-    public Car getWinner(int roundNumber) {
-        Map<Car, Double> resultOfRound = resultOfRace.get(roundNumber);
+    public Car getWinner(int number) {
+        if (number > roundNumber) {
+            throw new RoundsShouldStartsSequentially();
+        }
+        Map<Car, Double> resultOfRound = resultOfRace.get(number);
         double minimum = Integer.MAX_VALUE;
         for (Double carTime : resultOfRound.values()) {
             if (carTime < minimum) {
