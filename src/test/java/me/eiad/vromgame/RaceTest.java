@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class RaceTest {
     private final Car carA = new Car(200, 10, 1);
@@ -61,28 +60,16 @@ public class RaceTest {
     }
 
     @Test
-    public void make_sure_that_the_winner_of_the_round_is_the_car_with_less_time_to_finish_the_track() {
-        Car carC = new Car(330, 5, 3);
-        Car carD = new Car(220, 3, 2);
-        Car carE = new Car(260, 8, 1);
-        Car carF = new Car(300, 4, 2);
-        Track trackC = new Track(500);
-        Track trackD = new Track(2000);
-        Track trackE = new Track(2500);
-        Track trackF = new Track(2200);
-        Race race = new Race((List.of(carA, carB, carC, carD, carE, carF)), 2, List.of(trackA, trackB, trackC, trackD, trackE, trackF));
-        Map<Car, Double> result = race.start();
+    public void after_finish_the_race_must_return_list_of_winners() {
+        Race race = new Race(List.of(carA, carB), 2, List.of(trackA, trackB));
 
-        Double carATime = result.get(carA);
-        Double carBTime = result.get(carB);
-        Car winner = race.getWinnerOfRound(2);
+        List<Car> winners = race.start();
 
-        Assertions.assertTrue(carATime < carBTime);
-        Assertions.assertEquals(carA, winner);
+        Assertions.assertEquals(0, winners.size());
     }
 
     @Test
-    public void make_sure_that_the_loser_of_the_round_is_the_car_with_the_highest_time_to_finish_the_track() {
+    public void winners_of_round_should_be_all_the_cars_except_the_last_car() {
         Car carC = new Car(330, 5, 3);
         Car carD = new Car(220, 3, 2);
         Car carE = new Car(260, 8, 1);
@@ -92,14 +79,42 @@ public class RaceTest {
         Track trackE = new Track(2500);
         Track trackF = new Track(2200);
         Race race = new Race((List.of(carA, carB, carC, carD, carE, carF)), 4, List.of(trackA, trackB, trackC, trackD, trackE, trackF));
-        Map<Car, Double> result = race.start();
+        race.start();
 
-        Double carATime = result.get(carA);
-        Double carBTime = result.get(carB);
+        List<Car> winners = race.getWinners(3);
+
+        Assertions.assertEquals(5, winners.size());
+    }
+
+    @Test
+    public void make_sure_that_the_winner_of_the_round_is_the_car_with_less_time_to_finish_the_track() {
+        Car carC = new Car(330, 5, 3);
+        Car carD = new Car(220, 3, 2);
+        Car carE = new Car(260, 8, 1);
+        Car carF = new Car(300, 4, 2);
+        Track trackC = new Track(500);
+        Track trackD = new Track(2000);
+        Track trackE = new Track(2500);
+        Track trackF = new Track(2200);
+        Race race = new Race((List.of(carA, carB, carC, carD, carE, carF)), 2,
+                List.of(trackA, trackB, trackC, trackD, trackE, trackF));
+        race.start();
+
+        Car winner = race.getWinner(2);
+
+        Assertions.assertEquals(carA, winner);
+    }
+
+
+    @Test
+    public void make_sure_that_the_loser_of_the_round_is_the_car_with_the_highest_time_to_finish_the_track() {
+        Race race = new Race((List.of(carA, carB)), 2,
+                List.of(trackA, trackB));
+        race.start();
+
         Car loser = race.getLoser(1);
 
-        Assertions.assertTrue(carBTime > carATime);
-        Assertions.assertEquals(loser, carD);
+        Assertions.assertEquals(loser, carB);
     }
 
     @Test
@@ -108,7 +123,7 @@ public class RaceTest {
         race.start();
 
         Assertions.assertThrows(RoundsShouldStartsSequentially.class,
-                () -> race.getWinnerOfRound(3));
+                () -> race.getWinner(3));
     }
 
     @Test
@@ -119,23 +134,6 @@ public class RaceTest {
         Assertions.assertEquals(carA, race.getWinner());
     }
 
-    @Test
-    public void winners_of_rounds_should_be_all_the_cars_except_the_last_car() {
-        Car carC = new Car(330, 5, 3);
-        Car carD = new Car(220, 3, 2);
-        Car carE = new Car(260, 8, 1);
-        Car carF = new Car(300, 4, 2);
-        Track trackC = new Track(500);
-        Track trackD = new Track(2000);
-        Track trackE = new Track(2500);
-        Track trackF = new Track(2200);
-        Race race = new Race((List.of(carA, carB, carC, carD, carE, carF)), 4, List.of(trackA, trackB, trackC, trackD, trackE, trackF));
-        race.start();
-
-        List<Car> winners = race.getWinnersOfRound(3);
-
-        Assertions.assertEquals(5, winners.size());
-    }
 
     @Test
     public void first_place_of_round_should_takes_65_form_the_points_for_this_round() {
@@ -144,4 +142,6 @@ public class RaceTest {
 
         Assertions.assertEquals(100, carA.getUpgradePoints());
     }
+
+
 }

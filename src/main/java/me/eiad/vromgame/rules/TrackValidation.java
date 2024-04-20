@@ -9,7 +9,7 @@ public class TrackValidation implements Rule {
         if (race.getTracks().size() < 2) {
             throw new TracksShouldBeMoreThanOneTrack();
         }
-        if (race.getRounds() > race.getTracks().size()) {
+        if (race.getRounds().size() > race.getTracks().size()) {
             throw new TracksShouldBeMoreThanOneTrack();
         }
     }

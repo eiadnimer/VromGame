@@ -6,7 +6,7 @@ import me.eiad.vromgame.exeptions.RoundsShouldNotBeLessThanTwo;
 public class RoundValidation implements Rule {
     @Override
     public void isValid(Race race) {
-        if (race.getRounds() < 2) {
+        if (race.getRounds().size() < 2) {
             throw new RoundsShouldNotBeLessThanTwo();
         }
     }

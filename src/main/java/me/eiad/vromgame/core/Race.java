@@ -1,63 +1,49 @@
 package me.eiad.vromgame.core;
 
-import lombok.Getter;
 import me.eiad.vromgame.exeptions.RoundsShouldStartsSequentially;
 import me.eiad.vromgame.rules.*;
 
 import java.util.*;
 
-@Getter
 public class Race {
-
     private final Random random = new Random();
     private final List<Car> cars;
     private final int rounds;
     private final List<Track> tracks;
     private final List<Rule> rules = new ArrayList<>();
-    private int roundNumber = 0;
-    private final Map<Integer, Map<Car, Double>> resultOfRace = new HashMap<>();
-    private Car loser;
+    private final Map<Integer, Map<Car, Double>> resultOFRace = new HashMap<>();
+    private Car winner;
+    private Car winnerOFRace;
+    private List<Car> winners = new ArrayList<>();
+    private int roundNumber = 1;
     private Car winnerOfRound;
-    private final List<Car> winners = new ArrayList<>();
-    private final Map<Integer, Double> rewardsPoints = new HashMap<>();
-
+    private Car loser;
+    private boolean isFinished = false;
 
     public Race(List<Car> cars, int rounds, List<Track> tracks) {
         rules.add(new NumberOfCarsValidation());
         rules.add(new RoundValidation());
         rules.add(new TrackValidation());
         rules.add(new CarsEqual());
-        rewardsPoints.put(1, 100.0);
-        rewardsPoints.put(2, 150.0);
-        rewardsPoints.put(3, 200.0);
-        rewardsPoints.put(4, 250.0);
-        rewardsPoints.put(5, 300.0);
-        rewardsPoints.put(6, 350.0);
-        rewardsPoints.put(7, 400.0);
-        rewardsPoints.put(8, 450.0);
-        rewardsPoints.put(9, 500.0);
-        rewardsPoints.put(10, 600.0);
         this.cars = cars;
         this.rounds = rounds;
         this.tracks = tracks;
         checkIfValid();
     }
 
-    public Map<Car, Double> start() {
-        startRound();
-        return resultOfRace.get(roundNumber);
-    }
-
-    private void startRound() {
-        Map<Car, Double> resultOfRound = new HashMap<>();
-        int randomIndex = random.nextInt(tracks.size());
-        Track pickedTrack = tracks.get(randomIndex);
-        for (Car car : cars) {
-            double carTime = car.getTime(pickedTrack.getLength());
+    public List<Car> start() {
+        Map<Car, Double> result = new HashMap<>();
+        while (rounds >= roundNumber) {
+            int randomIndex = random.nextInt(tracks.size());
+            Track pickedTrack = tracks.get(randomIndex);
+            for (Car car : cars) {
+                double carTime = car.getTime(pickedTrack.getLength());
+                result.put(car, carTime);
+                resultOFRace.put(roundNumber, result);
+            }
             roundNumber++;
-            resultOfRound.put(car, carTime);
-            resultOfRace.put(roundNumber, resultOfRound);
         }
+        return getWinners();
     }
 
     private void checkIfValid() {
@@ -67,14 +53,14 @@ public class Race {
     }
 
     public Car getLoser(int roundNumber) {
-        Map<Car, Double> resultOfRound = resultOfRace.get(roundNumber);
+        Map<Car, Double> result = resultOFRace.get(roundNumber);
         double maximum = 0;
-        for (Double carTime : resultOfRound.values()) {
+        for (Double carTime : result.values()) {
             if (carTime > maximum) {
                 maximum = carTime;
             }
         }
-        for (Map.Entry<Car, Double> entry : resultOfRound.entrySet()) {
+        for (Map.Entry<Car, Double> entry : result.entrySet()) {
             if (Objects.equals(entry.getValue(), maximum)) {
                 loser = entry.getKey();
             }
@@ -82,19 +68,20 @@ public class Race {
         return loser;
     }
 
-    public Car getWinnerOfRound(int number) {
-        if (number > roundNumber) {
+
+    public Car getWinner(int roundNumber) {
+        Map<Car, Double> resultOfRound = resultOFRace.get(roundNumber);
+        if (resultOfRound == null) {
             throw new RoundsShouldStartsSequentially();
         }
-        Map<Car, Double> resultOfRound = resultOfRace.get(number);
-        double minimum = Integer.MAX_VALUE;
+        double bestScore = Integer.MAX_VALUE;
         for (Double carTime : resultOfRound.values()) {
-            if (carTime < minimum) {
-                minimum = carTime;
+            if (carTime < bestScore) {
+                bestScore = carTime;
             }
         }
         for (Map.Entry<Car, Double> entry : resultOfRound.entrySet()) {
-            if (Objects.equals(entry.getValue(), minimum)) {
+            if (Objects.equals(entry.getValue(), bestScore)) {
                 winnerOfRound = entry.getKey();
             }
         }
@@ -102,36 +89,41 @@ public class Race {
     }
 
     public Car getWinner() {
-        Map<Car, Double> lastRound = resultOfRace.get(roundNumber);
+        Map<Car, Double> lastRound = resultOFRace.get(roundNumber - 1);
         double bestScore = Collections.min(lastRound.values());
         for (Map.Entry<Car, Double> entry : lastRound.entrySet()) {
             if (Objects.equals(entry.getValue(), bestScore)) {
-                return entry.getKey();
+                winner = entry.getKey();
             }
         }
-        return null;
+        return winner;
     }
 
-    public List<Car> getWinnersOfRound(int roundNumber) {
-        Map<Car, Double> resultOfRound = resultOfRace.get(roundNumber);
-        double lastPlace = Collections.max(resultOfRound.values());
-        for (Map.Entry<Car, Double> entry : resultOfRound.entrySet()) {
-            if (Objects.equals(entry.getValue(), lastPlace)) {
-                Car car = entry.getKey();
-                resultOfRound.remove(car);
-                break;
-            }
-        }
-        List<Car> winners = new ArrayList<>(resultOfRound.keySet());
-        winners.sort(Comparator.comparingDouble(resultOfRound::get));
+    public List<Car> getWinners(int roundNumber) {
+        Map<Car, Double> resultOfRound = resultOFRace.get(roundNumber);
+        List<Car> sortedKeys = new ArrayList<>(resultOfRound.keySet());
+        sortedKeys.sort(Comparator.comparingDouble(resultOfRound::get));
+        sortedKeys.remove(sortedKeys.size() - 1);
+        return sortedKeys;
+    }
+
+    public List<Car> getWinners() {
         return winners;
     }
 
-    private void segregatePoints() {
-        List<Car> winnerOfRound = getWinnersOfRound(roundNumber);
-        Double reward = rewardsPoints.get(roundNumber);
-        for (Car car : winnerOfRound) {
-            car.setUpgradePoints(reward);
+    public List<Track> getTracks() {
+        return tracks;
+    }
+
+    public List<Integer> getRounds() {
+        List<Integer> result = new ArrayList<>();
+        for (int i = 1; i <= rounds; i++) {
+            result.add(i);
         }
+        return result;
+    }
+
+    public List<Car> getCars() {
+        return cars;
     }
 }
