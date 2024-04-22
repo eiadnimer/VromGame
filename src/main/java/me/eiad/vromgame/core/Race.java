@@ -6,6 +6,8 @@ import me.eiad.vromgame.rules.*;
 import java.util.*;
 
 public class Race {
+
+    private final Reward reward;
     private final Random random = new Random();
     private final List<Car> cars;
     private final int rounds;
@@ -13,12 +15,10 @@ public class Race {
     private final List<Rule> rules = new ArrayList<>();
     private final Map<Integer, Map<Car, Double>> resultOFRace = new HashMap<>();
     private Car winner;
-    private Car winnerOFRace;
-    private List<Car> winners = new ArrayList<>();
+    private final List<Car> winners = new ArrayList<>();
     private int roundNumber = 1;
     private Car winnerOfRound;
     private Car loser;
-    private boolean isFinished = false;
 
     public Race(List<Car> cars, int rounds, List<Track> tracks) {
         rules.add(new NumberOfCarsValidation());
@@ -29,6 +29,7 @@ public class Race {
         this.rounds = rounds;
         this.tracks = tracks;
         checkIfValid();
+        reward = new Reward(rounds);
     }
 
     public List<Car> start() {
@@ -41,6 +42,8 @@ public class Race {
                 result.put(car, carTime);
                 resultOFRace.put(roundNumber, result);
             }
+            List<Car> winners = getWinners(roundNumber);
+            reward.segregatePoints(winners, roundNumber);
             roundNumber++;
         }
         return getWinners();
@@ -107,7 +110,7 @@ public class Race {
         return sortedKeys;
     }
 
-    public List<Car> getWinners() {
+    private List<Car> getWinners() {
         return winners;
     }
 

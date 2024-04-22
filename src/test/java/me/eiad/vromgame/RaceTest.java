@@ -134,14 +134,24 @@ public class RaceTest {
         Assertions.assertEquals(carA, race.getWinner());
     }
 
-
     @Test
     public void first_place_of_round_should_takes_65_form_the_points_for_this_round() {
         Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
         race.start();
 
-        Assertions.assertEquals(100, carA.getUpgradePoints());
+        Assertions.assertEquals(162.5, carA.getUpgradePoints());
     }
 
+    @Test
+    public void second_place_of_round_should_takes_65_from_remain_points_for_this_round() {
+        Car carC = new Car(500, 100, 0.5);
+        Race race = new Race((List.of(carA, carB, carC)), 2, List.of(trackA, trackB));
+        race.start();
 
+        List<Car> winners = race.getWinners(1);
+        Car car = winners.get(0);
+
+        Assertions.assertEquals(car, carC);
+        Assertions.assertEquals(56.875, carA.getUpgradePoints());
+    }
 }
