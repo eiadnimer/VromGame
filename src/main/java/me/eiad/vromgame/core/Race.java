@@ -14,6 +14,7 @@ public class Race {
     private final List<Track> tracks;
     private final List<Rule> rules = new ArrayList<>();
     private final Map<Integer, Map<Car, Double>> resultOFRace = new HashMap<>();
+    private final Map<Car, Report> carReport = new HashMap<>();
     private Car winner;
     private final List<Car> winners = new ArrayList<>();
     private int roundNumber = 1;
@@ -41,6 +42,7 @@ public class Race {
                 double carTime = car.getTime(pickedTrack.getLength());
                 result.put(car, carTime);
                 resultOFRace.put(roundNumber, result);
+                carReport.put(car, car.getReport(pickedTrack.getLength()));
             }
             List<Car> winners = getWinners(roundNumber);
             reward.segregatePoints(winners, roundNumber);
@@ -124,6 +126,10 @@ public class Race {
             result.add(i);
         }
         return result;
+    }
+
+    public Map<Car, Report> getReport() {
+        return carReport;
     }
 
     public List<Car> getCars() {

@@ -5,7 +5,8 @@ import lombok.Setter;
 import me.eiad.vromgame.exeptions.AccelerationShouldBePositive;
 import me.eiad.vromgame.exeptions.TimeIsMinus;
 import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;
-import java.util.Objects;
+
+import java.util.*;
 
 @Getter
 @Setter
@@ -41,6 +42,37 @@ public class Car {
         double timeAtTopSpeed = distanceRemaining / topSpeed;
         return timeToTopSpeed + timeAtTopSpeed + warmUpTime;
     }
+
+    protected Report getReport(double trackLength) {
+        Map<Integer, String> result = new HashMap<>();
+        double distanceCovered = 0;
+        double currentSpeed = 0;
+
+        for (int second = 1; distanceCovered < trackLength; second++) {
+            if (second <= warmUpTime) {
+                result.put(second, "Car is still not moving");
+            } else {
+                if (second == warmUpTime + 1) {
+                    currentSpeed = acceleration * warmUpTime;
+                } else {
+                    currentSpeed += acceleration;
+                    if (currentSpeed > topSpeed) {
+                        currentSpeed = topSpeed;
+                    }
+                }
+                double distanceThisSecond = (currentSpeed / 3.6);
+                distanceCovered += distanceThisSecond;
+
+                if (distanceCovered > trackLength) {
+                    distanceThisSecond -= (distanceCovered - trackLength);
+                    distanceCovered = trackLength;
+                }
+                result.put(second, distanceThisSecond + " meters");
+            }
+        }
+        return new Report(result);
+    }
+
 
     @Override
     public boolean equals(Object o) {

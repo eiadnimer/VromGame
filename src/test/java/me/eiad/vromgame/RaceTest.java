@@ -2,6 +2,7 @@ package me.eiad.vromgame;
 
 import me.eiad.vromgame.core.Car;
 import me.eiad.vromgame.core.Race;
+import me.eiad.vromgame.core.Report;
 import me.eiad.vromgame.core.Track;
 import me.eiad.vromgame.exeptions.*;
 import org.junit.jupiter.api.Assertions;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RaceTest {
     private final Car carA = new Car(200, 10, 1);
@@ -127,6 +129,26 @@ public class RaceTest {
     }
 
     @Test
+    public void each_car_should_return_report() {
+        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
+        race.start();
+
+        Assertions.assertNotNull(race.getReport());
+    }
+
+    @Test
+    public void each_car_should_keep_track_there_move_the_hole_race() {
+        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
+        race.start();
+
+        Map<Car, Report> reports = race.getReport();
+        Report reportA = reports.get(carA);
+        Map<Integer, String> report = reportA.getReport();
+
+        Assertions.assertNotNull(report.get(3));
+    }
+
+    @Test
     public void the_winner_for_the_race_is_the_winner_of_the_last_round_of_the_race() {
         Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
         race.start();
@@ -149,9 +171,17 @@ public class RaceTest {
         race.start();
 
         List<Car> winners = race.getWinners(1);
-        Car car = winners.get(0);
+        Car car = winners.get(1);
 
-        Assertions.assertEquals(car, carC);
+        Assertions.assertEquals(car, carA);
         Assertions.assertEquals(56.875, carA.getUpgradePoints());
+    }
+
+    @Test
+    public void the_last_car_should_takes_zero_points(){
+        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
+        race.start();
+
+        Assertions.assertEquals(0, carB.getUpgradePoints());
     }
 }
