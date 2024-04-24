@@ -165,6 +165,14 @@ public class RaceTest {
     }
 
     @Test
+    public void the_last_car_should_takes_zero_points() {
+        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
+        race.start();
+
+        Assertions.assertEquals(0, carB.getUpgradePoints());
+    }
+
+    @Test
     public void second_place_of_round_should_takes_65_from_remain_points_for_this_round() {
         Car carC = new Car(500, 100, 0.5);
         Race race = new Race((List.of(carA, carB, carC)), 2, List.of(trackA, trackB));
@@ -177,11 +185,4 @@ public class RaceTest {
         Assertions.assertEquals(56.875, carA.getUpgradePoints());
     }
 
-    @Test
-    public void the_last_car_should_takes_zero_points(){
-        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
-        race.start();
-
-        Assertions.assertEquals(0, carB.getUpgradePoints());
-    }
 }

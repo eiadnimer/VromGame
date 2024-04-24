@@ -24,8 +24,7 @@ public class Reward {
         Map<Integer, Double> points = getPoints();
         Double result = points.get(roundNumber);
         for (Car car : cars) {
-            double upgradePoints = car.getUpgradePoints();
-            car.setUpgradePoints(upgradePoints + (result * 0.65));
+            car.updatePoints(result);
             result = result - (result * 0.65);
         }
     }

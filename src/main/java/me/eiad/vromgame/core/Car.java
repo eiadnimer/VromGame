@@ -1,15 +1,12 @@
 package me.eiad.vromgame.core;
 
 import lombok.Getter;
-import lombok.Setter;
 import me.eiad.vromgame.exeptions.AccelerationShouldBePositive;
 import me.eiad.vromgame.exeptions.TimeIsMinus;
 import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;
 
 import java.util.*;
-
 @Getter
-@Setter
 public class Car {
     private int topSpeed;
     private int acceleration;
@@ -73,6 +70,10 @@ public class Car {
         return new Report(result);
     }
 
+
+    protected void updatePoints(Double result) {
+        upgradePoints = upgradePoints + (result * 0.65);
+    }
 
     @Override
     public boolean equals(Object o) {
