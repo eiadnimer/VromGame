@@ -1,9 +1,6 @@
 package me.eiad.vromgame;
 
-import me.eiad.vromgame.core.Car;
-import me.eiad.vromgame.core.Race;
-import me.eiad.vromgame.core.Report;
-import me.eiad.vromgame.core.Track;
+import me.eiad.vromgame.core.*;
 import me.eiad.vromgame.exeptions.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 public class RaceTest {
+
+    private final MockUpgrade upgrade = new MockUpgrade();
     private final Car carA = new Car(200, 10, 1);
     private final Car carB = new Car(220, 7, 2);
     private final Track trackA = new Track(3000);
@@ -80,7 +79,8 @@ public class RaceTest {
         Track trackD = new Track(2000);
         Track trackE = new Track(2500);
         Track trackF = new Track(2200);
-        Race race = new Race((List.of(carA, carB, carC, carD, carE, carF)), 4, List.of(trackA, trackB, trackC, trackD, trackE, trackF));
+        Race race = new Race((List.of(carA, carB, carC, carD, carE, carF)), 4,
+                List.of(trackA, trackB, trackC, trackD, trackE, trackF));
         race.start();
 
         List<Car> winners = race.getWinners(3);
@@ -185,4 +185,15 @@ public class RaceTest {
         Assertions.assertEquals(56.875, carA.getUpgradePoints());
     }
 
+    @Test
+    public void after_each_round_the_winner_cars_should_choose_between_three_random_augmentation_to_upgrade_there_cars() {
+        Car carC = new Car(500, 100, 0.5);
+        Race race = new Race((List.of(carA, carB, carC)), 2, List.of(trackA, trackB));
+        List<Car> winners = race.start();
+
+        List<Augmentation> augmentations = race.getAugmentations();
+        upgrade.upgrade(winners,augmentations);
+
+        Assertions.assertTrue(upgrade.isCalled());
+    }
 }

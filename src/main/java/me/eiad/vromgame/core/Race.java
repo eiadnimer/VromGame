@@ -8,6 +8,8 @@ import java.util.*;
 public class Race {
 
     private final Reward reward;
+    private final UpgradeSystem upgrade = new Upgrade();
+    private final List<Augmentation> augmentations = new ArrayList<>();
     private final Random random = new Random();
     private final List<Car> cars;
     private final int rounds;
@@ -30,6 +32,9 @@ public class Race {
         this.rounds = rounds;
         this.tracks = tracks;
         checkIfValid();
+        augmentations.add(Augmentation.TOP_SPEED);
+        augmentations.add(Augmentation.ACCELERATIONS);
+        augmentations.add(Augmentation.WARMUP_TIME);
         reward = new Reward(rounds);
     }
 
@@ -46,6 +51,7 @@ public class Race {
             }
             List<Car> winners = getWinners(roundNumber);
             reward.segregatePoints(winners, roundNumber);
+            upgrade.upgrade(cars,augmentations);
             roundNumber++;
         }
         return getWinners();
@@ -72,7 +78,6 @@ public class Race {
         }
         return loser;
     }
-
 
     public Car getWinner(int roundNumber) {
         Map<Car, Double> resultOfRound = resultOFRace.get(roundNumber);
@@ -134,5 +139,9 @@ public class Race {
 
     public List<Car> getCars() {
         return cars;
+    }
+
+    public List<Augmentation> getAugmentations() {
+        return augmentations;
     }
 }

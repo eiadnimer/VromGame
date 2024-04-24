@@ -87,4 +87,8 @@ public class Car {
     public int hashCode() {
         return Objects.hash(topSpeed, acceleration, warmUpTime);
     }
+
+    public void upgrade(Augmentation augmentation) {
+
+    }
 }

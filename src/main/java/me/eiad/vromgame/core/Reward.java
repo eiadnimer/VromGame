@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class Reward {
     private final int rounds;
-
     public Reward(int rounds) {
         if (rounds < 2) {
             throw new RoundsShouldNotBeLessThanTwo();
