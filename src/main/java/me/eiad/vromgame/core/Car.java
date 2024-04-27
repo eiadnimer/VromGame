@@ -6,6 +6,7 @@ import me.eiad.vromgame.exeptions.TimeIsMinus;
 import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;
 
 import java.util.*;
+
 @Getter
 public class Car {
     private int topSpeed;
@@ -75,6 +76,34 @@ public class Car {
         upgradePoints = upgradePoints + (result * 0.65);
     }
 
+    public void upgrade(Augmentation augmentationType) {
+        if (augmentationType.equals(Augmentation.TOP_SPEED)) {
+            upgradeTopSpeed();
+        }
+        if (augmentationType.equals(Augmentation.ACCELERATIONS)) {
+            upgradeAcceleration();
+        }
+        if (augmentationType.equals(Augmentation.WARMUP_TIME)) {
+            upgradeWarmupTime();
+        }
+    }
+
+    private void upgradeWarmupTime() {
+        if (warmUpTime == 0 || warmUpTime == 0.5) {
+            warmUpTime = warmUpTime + 0;
+        } else {
+            warmUpTime = warmUpTime - 0.5;
+        }
+    }
+
+    private void upgradeAcceleration() {
+        acceleration = acceleration + 5;
+    }
+
+    private void upgradeTopSpeed() {
+        topSpeed = topSpeed + 10;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,9 +115,5 @@ public class Car {
     @Override
     public int hashCode() {
         return Objects.hash(topSpeed, acceleration, warmUpTime);
-    }
-
-    public void upgrade(Augmentation augmentation) {
-
     }
 }

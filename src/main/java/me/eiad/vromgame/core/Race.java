@@ -18,7 +18,6 @@ public class Race {
     private final Map<Integer, Map<Car, Double>> resultOFRace = new HashMap<>();
     private final Map<Car, Report> carReport = new HashMap<>();
     private Car winner;
-    private final List<Car> winners = new ArrayList<>();
     private int roundNumber = 1;
     private Car winnerOfRound;
     private Car loser;
@@ -51,10 +50,10 @@ public class Race {
             }
             List<Car> winners = getWinners(roundNumber);
             reward.segregatePoints(winners, roundNumber);
-            upgrade.upgrade(cars,augmentations);
+            upgrade.upgrade(winners, augmentations);
             roundNumber++;
         }
-        return getWinners();
+        return getWinners(roundNumber - 1);
     }
 
     private void checkIfValid() {
@@ -111,14 +110,24 @@ public class Race {
 
     public List<Car> getWinners(int roundNumber) {
         Map<Car, Double> resultOfRound = resultOFRace.get(roundNumber);
-        List<Car> sortedKeys = new ArrayList<>(resultOfRound.keySet());
-        sortedKeys.sort(Comparator.comparingDouble(resultOfRound::get));
-        sortedKeys.remove(sortedKeys.size() - 1);
+        List<Car> sortedKeys = new ArrayList<>();
+        List<Map.Entry<Car, Double>> entryList = new ArrayList<>(resultOfRound.entrySet());
+        entryList.sort(Comparator.comparingDouble(Map.Entry::getValue));
+        for (Map.Entry<Car, Double> entry : entryList) {
+            if (sortedKeys.contains(entry.getKey())) {
+                continue;
+            }
+            sortedKeys.add(entry.getKey());
+        }
+        if (sortedKeys.size() != 1) {
+            sortedKeys.remove(sortedKeys.size() - 1);
+        }
         return sortedKeys;
+
     }
 
-    private List<Car> getWinners() {
-        return winners;
+    public List<Car> getWinners() {
+        return getWinners(roundNumber - 1);
     }
 
     public List<Track> getTracks() {

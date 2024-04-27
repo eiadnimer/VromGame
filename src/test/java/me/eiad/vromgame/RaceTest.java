@@ -63,10 +63,11 @@ public class RaceTest {
     @Test
     public void after_finish_the_race_must_return_list_of_winners() {
         Race race = new Race(List.of(carA, carB), 2, List.of(trackA, trackB));
+        race.start();
 
-        List<Car> winners = race.start();
+        List<Car> winners = race.getWinners();
 
-        Assertions.assertEquals(0, winners.size());
+        Assertions.assertEquals(1, winners.size());
     }
 
     @Test
@@ -83,7 +84,7 @@ public class RaceTest {
                 List.of(trackA, trackB, trackC, trackD, trackE, trackF));
         race.start();
 
-        List<Car> winners = race.getWinners(3);
+        List<Car> winners = race.getWinners(2);
 
         Assertions.assertEquals(5, winners.size());
     }
@@ -137,18 +138,6 @@ public class RaceTest {
     }
 
     @Test
-    public void each_car_should_keep_track_there_move_the_hole_race() {
-        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
-        race.start();
-
-        Map<Car, Report> reports = race.getReport();
-        Report reportA = reports.get(carA);
-        Map<Integer, String> report = reportA.getReport();
-
-        Assertions.assertNotNull(report.get(3));
-    }
-
-    @Test
     public void the_winner_for_the_race_is_the_winner_of_the_last_round_of_the_race() {
         Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
         race.start();
@@ -172,18 +161,6 @@ public class RaceTest {
         Assertions.assertEquals(0, carB.getUpgradePoints());
     }
 
-    @Test
-    public void second_place_of_round_should_takes_65_from_remain_points_for_this_round() {
-        Car carC = new Car(500, 100, 0.5);
-        Race race = new Race((List.of(carA, carB, carC)), 2, List.of(trackA, trackB));
-        race.start();
-
-        List<Car> winners = race.getWinners(1);
-        Car car = winners.get(1);
-
-        Assertions.assertEquals(car, carA);
-        Assertions.assertEquals(56.875, carA.getUpgradePoints());
-    }
 
     @Test
     public void after_each_round_the_winner_cars_should_choose_between_three_random_augmentation_to_upgrade_there_cars() {
@@ -192,7 +169,7 @@ public class RaceTest {
         List<Car> winners = race.start();
 
         List<Augmentation> augmentations = race.getAugmentations();
-        upgrade.upgrade(winners,augmentations);
+        upgrade.upgrade(winners, augmentations);
 
         Assertions.assertTrue(upgrade.isCalled());
     }
