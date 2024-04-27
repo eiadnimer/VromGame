@@ -7,9 +7,9 @@ import java.util.Map;
 @Getter
 public class Report {
 
-    private final Map<Integer, String> report;
+    private final Map<Integer, String> secondsReport;
 
     public Report(Map<Integer, String> report) {
-        this.report = report;
+        this.secondsReport = report;
     }
 }

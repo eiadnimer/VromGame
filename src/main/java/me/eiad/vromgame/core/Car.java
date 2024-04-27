@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.eiad.vromgame.exeptions.AccelerationShouldBePositive;
 import me.eiad.vromgame.exeptions.TimeIsMinus;
 import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;
-
 import java.util.*;
 
 @Getter

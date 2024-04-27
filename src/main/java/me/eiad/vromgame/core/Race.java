@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Race {
 
-    private final Reward reward;
+    private final RewardSystem reward;
     private final UpgradeSystem upgrade = new Upgrade();
     private final List<Augmentation> augmentations = new ArrayList<>();
     private final Random random = new Random();
@@ -16,7 +16,7 @@ public class Race {
     private final List<Track> tracks;
     private final List<Rule> rules = new ArrayList<>();
     private final Map<Integer, Map<Car, Double>> resultOFRace = new HashMap<>();
-    private final Map<Car, Report> carReport = new HashMap<>();
+    private final Map<Integer, Map<Car, Report>> carReport = new HashMap<>();
     private Car winner;
     private int roundNumber = 1;
     private Car winnerOfRound;
@@ -39,6 +39,7 @@ public class Race {
 
     public List<Car> start() {
         Map<Car, Double> result = new HashMap<>();
+        Map<Car, Report> report = new HashMap<>();
         while (rounds >= roundNumber) {
             int randomIndex = random.nextInt(tracks.size());
             Track pickedTrack = tracks.get(randomIndex);
@@ -46,7 +47,8 @@ public class Race {
                 double carTime = car.getTime(pickedTrack.getLength());
                 result.put(car, carTime);
                 resultOFRace.put(roundNumber, result);
-                carReport.put(car, car.getReport(pickedTrack.getLength()));
+                report.put(car, car.getReport(pickedTrack.getLength()));
+                carReport.put(roundNumber, report);
             }
             List<Car> winners = getWinners(roundNumber);
             reward.segregatePoints(winners, roundNumber);
@@ -142,8 +144,8 @@ public class Race {
         return result;
     }
 
-    public Map<Car, Report> getReport() {
-        return carReport;
+    public Map<Car, Report> getReport(int roundNumber) {
+        return carReport.get(roundNumber);
     }
 
     public List<Car> getCars() {

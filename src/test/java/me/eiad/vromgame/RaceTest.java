@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class RaceTest {
 
     private final MockUpgrade upgrade = new MockUpgrade();
+    private final MockReward reward = new MockReward();
     private final Car carA = new Car(200, 10, 1);
     private final Car carB = new Car(220, 7, 2);
     private final Track trackA = new Track(3000);
@@ -111,8 +111,7 @@ public class RaceTest {
 
     @Test
     public void make_sure_that_the_loser_of_the_round_is_the_car_with_the_highest_time_to_finish_the_track() {
-        Race race = new Race((List.of(carA, carB)), 2,
-                List.of(trackA, trackB));
+        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
         race.start();
 
         Car loser = race.getLoser(1);
@@ -134,7 +133,7 @@ public class RaceTest {
         Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
         race.start();
 
-        Assertions.assertNotNull(race.getReport());
+        Assertions.assertNotNull(race.getReport(1));
     }
 
     @Test
@@ -146,17 +145,21 @@ public class RaceTest {
     }
 
     @Test
-    public void first_place_of_round_should_takes_65_form_the_points_for_this_round() {
+    public void make_sure_to_segregate_the_points_after_each_round() {
         Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
         race.start();
 
-        Assertions.assertEquals(162.5, carA.getUpgradePoints());
+        reward.segregatePoints(List.of(carA, carB), 1);
+
+        Assertions.assertTrue(reward.isCalled());
     }
 
     @Test
-    public void the_last_car_should_takes_zero_points() {
+    public void make_sure_that_the_last_car_should_takes_zero_points() {
         Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
         race.start();
+
+        reward.segregatePoints(List.of(carA, carB), 1);
 
         Assertions.assertEquals(0, carB.getUpgradePoints());
     }

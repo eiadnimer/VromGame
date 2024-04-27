@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Reward {
+public class Reward implements RewardSystem {
     private final int rounds;
     public Reward(int rounds) {
         if (rounds < 2) {
@@ -15,7 +15,7 @@ public class Reward {
         }
         this.rounds = rounds;
     }
-
+    @Override
     public void segregatePoints(List<Car> cars, int roundNumber) {
         if (cars.isEmpty()) {
             throw new CarsShouldBeMoreThanOneCar();
