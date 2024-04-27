@@ -73,9 +73,9 @@ public class RaceTest {
     @Test
     public void winners_of_round_should_be_all_the_cars_except_the_last_car() {
         Car carC = new Car(330, 5, 3);
-        Car carD = new Car(220, 3, 2);
+        Car carD = new Car(220, 3, 1);
         Car carE = new Car(260, 8, 2);
-        Car carF = new Car(300, 4, 2);
+        Car carF = new Car(300, 4, 0.5);
         Track trackC = new Track(500);
         Track trackD = new Track(2000);
         Track trackE = new Track(2500);
@@ -168,7 +168,7 @@ public class RaceTest {
 
     @Test
     public void after_each_round_the_winner_cars_should_choose_between_three_random_augmentation_to_upgrade_there_cars() {
-        Car carC = new Car(500, 100, 0.5);
+        Car carC = new Car(500, 100, 2);
         Race race = new Race((List.of(carA, carB, carC)), 2, List.of(trackA, trackB));
         List<Car> winners = race.start();
 

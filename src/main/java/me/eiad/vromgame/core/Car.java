@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.eiad.vromgame.exeptions.AccelerationShouldBePositive;
 import me.eiad.vromgame.exeptions.TimeIsMinus;
 import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;
-import me.eiad.vromgame.exeptions.WarmupTimeIsMinimumValue;
 
 import java.util.*;
 
@@ -91,7 +90,7 @@ public class Car {
 
     private void upgradeWarmupTime() {
         if (warmUpTime == 0 || warmUpTime == 0.5) {
-            throw new WarmupTimeIsMinimumValue();
+            warmUpTime = warmUpTime + 0;
         } else {
             warmUpTime = warmUpTime - 0.5;
         }

@@ -60,7 +60,8 @@ public class CarTest {
     public void minimum_warmupTime_is_zero() {
         Car car = new Car(200, 4, 0);
 
-        Assertions.assertThrows(WarmupTimeIsMinimumValue.class,
-                () -> car.upgrade(Augmentation.WARMUP_TIME));
+        car.upgrade(Augmentation.WARMUP_TIME);
+
+        Assertions.assertEquals(0, car.getWarmUpTime());
     }
 }
