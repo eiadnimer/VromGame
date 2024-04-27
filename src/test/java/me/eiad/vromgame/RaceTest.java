@@ -12,7 +12,7 @@ public class RaceTest {
 
     private final MockUpgrade upgrade = new MockUpgrade();
     private final MockReward reward = new MockReward();
-    private final Car carA = new Car(200, 10, 1);
+    private final Car carA = new Car(200, 10, 2);
     private final Car carB = new Car(220, 7, 2);
     private final Track trackA = new Track(3000);
     private final Track trackB = new Track(1000);
@@ -74,7 +74,7 @@ public class RaceTest {
     public void winners_of_round_should_be_all_the_cars_except_the_last_car() {
         Car carC = new Car(330, 5, 3);
         Car carD = new Car(220, 3, 2);
-        Car carE = new Car(260, 8, 1);
+        Car carE = new Car(260, 8, 2);
         Car carF = new Car(300, 4, 2);
         Track trackC = new Track(500);
         Track trackD = new Track(2000);
@@ -93,7 +93,7 @@ public class RaceTest {
     public void make_sure_that_the_winner_of_the_round_is_the_car_with_less_time_to_finish_the_track() {
         Car carC = new Car(330, 5, 3);
         Car carD = new Car(220, 3, 2);
-        Car carE = new Car(260, 8, 1);
+        Car carE = new Car(260, 8, 2);
         Car carF = new Car(300, 4, 2);
         Track trackC = new Track(500);
         Track trackD = new Track(2000);
@@ -111,12 +111,13 @@ public class RaceTest {
 
     @Test
     public void make_sure_that_the_loser_of_the_round_is_the_car_with_the_highest_time_to_finish_the_track() {
-        Race race = new Race((List.of(carA, carB)), 2, List.of(trackA, trackB));
+        Car carC = new Car(200, 5, 10);
+        Race race = new Race((List.of(carA, carB,carC)), 2, List.of(trackA, trackB));
         race.start();
 
-        Car loser = race.getLoser(1);
+        Car loser = race.getLoser(2);
 
-        Assertions.assertEquals(loser, carB);
+        Assertions.assertEquals(loser, carC);
     }
 
     @Test
