@@ -10,8 +10,5 @@
         <module name="VromGame" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="VromGame" target="16" />
-    </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,13 +1,12 @@
 package me.eiad.vromgame.core;
 
-import lombok.Getter;
 import me.eiad.vromgame.exeptions.AccelerationShouldBePositive;
 import me.eiad.vromgame.exeptions.TimeIsMinus;
 import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;
 
 import java.util.*;
 
-@Getter
+
 public class Car {
     private int topSpeed;
     private int acceleration;
@@ -102,6 +101,22 @@ public class Car {
 
     private void upgradeTopSpeed() {
         topSpeed = topSpeed + 10;
+    }
+
+    public int getTopSpeed() {
+        return topSpeed;
+    }
+
+    public int getAcceleration() {
+        return acceleration;
+    }
+
+    public double getWarmUpTime() {
+        return warmUpTime;
+    }
+
+    public double getUpgradePoints() {
+        return upgradePoints;
     }
 
     @Override

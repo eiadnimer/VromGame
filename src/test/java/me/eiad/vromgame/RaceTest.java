@@ -112,7 +112,7 @@ public class RaceTest {
     @Test
     public void make_sure_that_the_loser_of_the_round_is_the_car_with_the_highest_time_to_finish_the_track() {
         Car carC = new Car(200, 5, 10);
-        Race race = new Race((List.of(carA, carB,carC)), 2, List.of(trackA, trackB));
+        Race race = new Race((List.of(carA, carB, carC)), 2, List.of(trackA, trackB));
         race.start();
 
         Car loser = race.getLoser(2);
@@ -127,6 +127,8 @@ public class RaceTest {
 
         Assertions.assertThrows(RoundsShouldStartsSequentially.class,
                 () -> race.getWinner(3));
+        Assertions.assertThrows(RoundsShouldStartsSequentially.class,
+                () -> race.getLoser(3));
     }
 
     @Test
@@ -177,4 +179,6 @@ public class RaceTest {
 
         Assertions.assertTrue(upgrade.isCalled());
     }
+
+
 }

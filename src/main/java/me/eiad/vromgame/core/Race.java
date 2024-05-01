@@ -8,7 +8,7 @@ import java.util.*;
 public class Race {
 
     private final RewardSystem reward;
-    private final UpgradeSystem upgrade = new Upgrade();
+    private final UpgradeSystem upgrade;
     private final List<Augmentation> augmentations = new ArrayList<>();
     private final Random random = new Random();
     private final List<Car> cars;
@@ -35,20 +35,21 @@ public class Race {
         augmentations.add(Augmentation.ACCELERATIONS);
         augmentations.add(Augmentation.WARMUP_TIME);
         reward = new Reward(rounds);
+        upgrade = new Upgrade();
     }
 
     public List<Car> start() {
-        Map<Car, Double> result = new HashMap<>();
-        Map<Car, Report> report = new HashMap<>();
+        Map<Car, Double> carsResult = new HashMap<>();
+        Map<Car, Report> carsReport = new HashMap<>();
         while (rounds >= roundNumber) {
             int randomIndex = random.nextInt(tracks.size());
             Track pickedTrack = tracks.get(randomIndex);
             for (Car car : cars) {
                 double carTime = car.getTime(pickedTrack.getLength());
-                result.put(car, carTime);
-                resultOFRace.put(roundNumber, result);
-                report.put(car, car.getReport(pickedTrack.getLength()));
-                carReport.put(roundNumber, report);
+                carsResult.put(car, carTime);
+                resultOFRace.put(roundNumber, carsResult);
+                carsReport.put(car, car.getReport(pickedTrack.getLength()));
+                carReport.put(roundNumber, carsReport);
             }
             List<Car> winners = getWinners(roundNumber);
             reward.segregatePoints(winners, roundNumber);
@@ -65,14 +66,17 @@ public class Race {
     }
 
     public Car getLoser(int roundNumber) {
-        Map<Car, Double> result = resultOFRace.get(roundNumber);
+        Map<Car, Double> resultOfRound = resultOFRace.get(roundNumber);
+        if (resultOfRound == null) {
+            throw new RoundsShouldStartsSequentially();
+        }
         double maximum = 0;
-        for (Double carTime : result.values()) {
+        for (Double carTime : resultOfRound.values()) {
             if (carTime > maximum) {
                 maximum = carTime;
             }
         }
-        for (Map.Entry<Car, Double> entry : result.entrySet()) {
+        for (Map.Entry<Car, Double> entry : resultOfRound.entrySet()) {
             if (Objects.equals(entry.getValue(), maximum)) {
                 loser = entry.getKey();
             }
