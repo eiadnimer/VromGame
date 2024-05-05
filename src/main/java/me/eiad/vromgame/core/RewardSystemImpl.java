@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Reward implements RewardSystem {
+public class RewardSystemImpl implements RewardSystem {
     private final int rounds;
-    public Reward(int rounds) {
+    public RewardSystemImpl(int rounds) {
         if (rounds < 2) {
             throw new RoundsShouldNotBeLessThanTwo();
         }

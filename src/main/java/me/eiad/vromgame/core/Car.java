@@ -1,6 +1,7 @@
 package me.eiad.vromgame.core;
 
 import me.eiad.vromgame.exeptions.AccelerationShouldBePositive;
+import me.eiad.vromgame.exeptions.NotEnoughPoints;
 import me.eiad.vromgame.exeptions.TimeIsMinus;
 import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;
 
@@ -88,19 +89,27 @@ public class Car {
     }
 
     private void upgradeWarmupTime() {
-        if (warmUpTime == 0 || warmUpTime == 0.5) {
-            warmUpTime = warmUpTime + 0;
-        } else {
-            warmUpTime = warmUpTime - 0.5;
+        if (Augmentation.isEnough(upgradePoints, Augmentation.WARMUP_TIME)) {
+            if (warmUpTime == 0 || warmUpTime == 0.5) {
+                warmUpTime = warmUpTime + 0;
+            } else {
+                warmUpTime = warmUpTime - 0.5;
+            }
         }
+
     }
 
     private void upgradeAcceleration() {
-        acceleration = acceleration + 5;
+        if (Augmentation.isEnough(upgradePoints, Augmentation.ACCELERATIONS)) {
+            acceleration = acceleration + 5;
+        }
+
     }
 
     private void upgradeTopSpeed() {
-        topSpeed = topSpeed + 10;
+        if (Augmentation.isEnough(upgradePoints, Augmentation.TOP_SPEED)) {
+            topSpeed = topSpeed + 10;
+        }
     }
 
     public int getTopSpeed() {
@@ -117,6 +126,10 @@ public class Car {
 
     public double getUpgradePoints() {
         return upgradePoints;
+    }
+
+    public void setUpgradePoints(double points) {
+        upgradePoints = upgradePoints + points;
     }
 
     @Override

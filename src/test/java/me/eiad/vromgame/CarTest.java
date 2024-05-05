@@ -2,10 +2,7 @@ package me.eiad.vromgame;
 
 import me.eiad.vromgame.core.Augmentation;
 import me.eiad.vromgame.core.Car;
-import me.eiad.vromgame.exeptions.AccelerationShouldBePositive;
-import me.eiad.vromgame.exeptions.TimeIsMinus;
-import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;
-import me.eiad.vromgame.exeptions.WarmupTimeIsMinimumValue;
+import me.eiad.vromgame.exeptions.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -63,5 +60,19 @@ public class CarTest {
         car.upgrade(Augmentation.WARMUP_TIME);
 
         Assertions.assertEquals(0, car.getWarmUpTime());
+    }
+
+    @Test
+    public void if_upgradePoints_less_than_the_price_of_augmentation_must_fail() {
+        Car car = new Car(200, 4, 2);
+
+        car.setUpgradePoints(100);
+        car.upgrade(Augmentation.WARMUP_TIME);
+        car.upgrade(Augmentation.TOP_SPEED);
+        car.upgrade(Augmentation.ACCELERATIONS);
+
+        Assertions.assertEquals(1.5, car.getWarmUpTime());
+        Assertions.assertEquals(210, car.getTopSpeed());
+        Assertions.assertEquals(9, car.getAcceleration());
     }
 }

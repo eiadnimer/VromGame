@@ -5,11 +5,11 @@ import me.eiad.vromgame.exeptions.CarsShouldBeMoreThanOneCar;
 import java.util.List;
 import java.util.Random;
 
-public class Upgrade implements UpgradeSystem {
-    private final Random random = new Random();
+public class UpgradeSystemImpl implements UpgradeSystem {
 
     @Override
     public void upgrade(List<Car> winners, List<Augmentation> augmentations) {
+        Random random = new Random();
         if (winners == null || winners.isEmpty()) {
             throw new CarsShouldBeMoreThanOneCar();
         }

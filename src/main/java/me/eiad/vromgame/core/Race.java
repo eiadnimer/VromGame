@@ -1,5 +1,6 @@
 package me.eiad.vromgame.core;
 
+import lombok.Getter;
 import me.eiad.vromgame.exeptions.RoundsShouldStartsSequentially;
 import me.eiad.vromgame.rules.*;
 
@@ -9,10 +10,13 @@ public class Race {
 
     private final RewardSystem reward;
     private final UpgradeSystem upgrade;
+    @Getter
     private final List<Augmentation> augmentations = new ArrayList<>();
     private final Random random = new Random();
+    @Getter
     private final List<Car> cars;
     private final int rounds;
+    @Getter
     private final List<Track> tracks;
     private final List<Rule> rules = new ArrayList<>();
     private final Map<Integer, Map<Car, Double>> resultOFRace = new HashMap<>();
@@ -34,8 +38,8 @@ public class Race {
         augmentations.add(Augmentation.TOP_SPEED);
         augmentations.add(Augmentation.ACCELERATIONS);
         augmentations.add(Augmentation.WARMUP_TIME);
-        reward = new Reward(rounds);
-        upgrade = new Upgrade();
+        reward = new RewardSystemImpl(rounds);
+        upgrade = new UpgradeSystemImpl();
     }
 
     public List<Car> start() {
@@ -136,10 +140,6 @@ public class Race {
         return getWinners(roundNumber - 1);
     }
 
-    public List<Track> getTracks() {
-        return tracks;
-    }
-
     public List<Integer> getRounds() {
         List<Integer> result = new ArrayList<>();
         for (int i = 1; i <= rounds; i++) {
@@ -152,11 +152,4 @@ public class Race {
         return carReport.get(roundNumber);
     }
 
-    public List<Car> getCars() {
-        return cars;
-    }
-
-    public List<Augmentation> getAugmentations() {
-        return augmentations;
-    }
 }
