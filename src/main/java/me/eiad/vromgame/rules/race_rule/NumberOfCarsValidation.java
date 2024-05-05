@@ -1,13 +1,12 @@
-package me.eiad.vromgame.rules;
+package me.eiad.vromgame.rules.race_rule;
 
 import me.eiad.vromgame.core.Car;
 import me.eiad.vromgame.core.Race;
 import me.eiad.vromgame.exeptions.CarsShouldBeMoreThanOneCar;
-import me.eiad.vromgame.exeptions.CarsShouldNotBeTheSame;
 
 import java.util.List;
 
-public class NumberOfCarsValidation implements Rule {
+public class NumberOfCarsValidation implements RaceRule {
     @Override
     public void isValid(Race race) {
         List<Car> cars = race.getCars();

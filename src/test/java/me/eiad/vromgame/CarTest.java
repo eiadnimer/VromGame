@@ -30,6 +30,7 @@ public class CarTest {
     public void topSpeed_should_increase_by_10_each_time_the_car_use_upgrade_topSpeed() {
         Car car = new Car(200, 4, 2);
 
+        car.setUpgradePoints(100);
         car.upgrade(Augmentation.TOP_SPEED);
 
         Assertions.assertEquals(210, car.getTopSpeed());
@@ -39,6 +40,7 @@ public class CarTest {
     public void acceleration_should_increase_by_5_each_time_the_car_use_upgrade_acceleration() {
         Car car = new Car(200, 4, 2);
 
+        car.setUpgradePoints(100);
         car.upgrade(Augmentation.ACCELERATIONS);
 
         Assertions.assertEquals(9, car.getAcceleration());
@@ -48,6 +50,7 @@ public class CarTest {
     public void warmupTime_should_decrease_by_half_each_time_the_car_use_upgrade_warmupTime() {
         Car car = new Car(200, 4, 2);
 
+        car.setUpgradePoints(100);
         car.upgrade(Augmentation.WARMUP_TIME);
 
         Assertions.assertEquals(1.5, car.getWarmUpTime());
@@ -57,22 +60,22 @@ public class CarTest {
     public void minimum_warmupTime_is_zero() {
         Car car = new Car(200, 4, 0);
 
+        car.setUpgradePoints(100);
         car.upgrade(Augmentation.WARMUP_TIME);
 
         Assertions.assertEquals(0, car.getWarmUpTime());
     }
 
     @Test
-    public void if_upgradePoints_less_than_the_price_of_augmentation_must_fail() {
+    public void if_upgradePoints_less_than_the_price_of_augmentation_must_remain_the_same() {
         Car car = new Car(200, 4, 2);
 
-        car.setUpgradePoints(100);
         car.upgrade(Augmentation.WARMUP_TIME);
         car.upgrade(Augmentation.TOP_SPEED);
         car.upgrade(Augmentation.ACCELERATIONS);
 
-        Assertions.assertEquals(1.5, car.getWarmUpTime());
-        Assertions.assertEquals(210, car.getTopSpeed());
-        Assertions.assertEquals(9, car.getAcceleration());
+        Assertions.assertEquals(2, car.getWarmUpTime());
+        Assertions.assertEquals(200, car.getTopSpeed());
+        Assertions.assertEquals(4, car.getAcceleration());
     }
 }

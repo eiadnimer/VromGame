@@ -1,40 +1,41 @@
 package me.eiad.vromgame.core;
 
-import me.eiad.vromgame.exeptions.AccelerationShouldBePositive;
-import me.eiad.vromgame.exeptions.NotEnoughPoints;
-import me.eiad.vromgame.exeptions.TimeIsMinus;
-import me.eiad.vromgame.exeptions.TopSpeedShouldBePositive;
+import lombok.Getter;
+
+import me.eiad.vromgame.rules.car_rule.AccelerationValidation;
+import me.eiad.vromgame.rules.car_rule.CarRule;
+import me.eiad.vromgame.rules.car_rule.TopSpeedValidation;
+import me.eiad.vromgame.rules.car_rule.WarmupTimeValidation;
 
 import java.util.*;
 
 
+@Getter
 public class Car {
+    private final List<CarRule> rules = new ArrayList<>();
     private int topSpeed;
     private int acceleration;
     private double warmUpTime;
     private double upgradePoints;
 
     public Car(int topSpeed, int acceleration, double wormUpTime) {
-        validate(topSpeed, acceleration, wormUpTime);
+        rules.add(new TopSpeedValidation());
+        rules.add(new AccelerationValidation());
+        rules.add(new WarmupTimeValidation());
         this.topSpeed = topSpeed;
         this.acceleration = acceleration;
         this.warmUpTime = wormUpTime;
+        checkIfValid();
     }
 
-    private void validate(int topSpeed, int acceleration, double warmUpTime) {
-        if (topSpeed < 0) {
-            throw new TopSpeedShouldBePositive();
-        }
-        if (acceleration < 0) {
-            throw new AccelerationShouldBePositive();
-        }
-        if (warmUpTime < 0) {
-            throw new TimeIsMinus();
+    private void checkIfValid() {
+        for (CarRule rule : rules) {
+            rule.isValid(this);
         }
     }
 
     protected double getTime(double trackLength) {
-        double timeToTopSpeed = (topSpeed - 0) / acceleration;
+        double timeToTopSpeed = (double) (topSpeed) / acceleration;
         double distanceDuringAcceleration = 0.5 * acceleration * timeToTopSpeed * timeToTopSpeed;
         double distanceRemaining = trackLength - distanceDuringAcceleration;
         double timeAtTopSpeed = distanceRemaining / topSpeed;
@@ -110,22 +111,6 @@ public class Car {
         if (Augmentation.isEnough(upgradePoints, Augmentation.TOP_SPEED)) {
             topSpeed = topSpeed + 10;
         }
-    }
-
-    public int getTopSpeed() {
-        return topSpeed;
-    }
-
-    public int getAcceleration() {
-        return acceleration;
-    }
-
-    public double getWarmUpTime() {
-        return warmUpTime;
-    }
-
-    public double getUpgradePoints() {
-        return upgradePoints;
     }
 
     public void setUpgradePoints(double points) {

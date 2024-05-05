@@ -2,7 +2,7 @@ package me.eiad.vromgame.core;
 
 import lombok.Getter;
 import me.eiad.vromgame.exeptions.RoundsShouldStartsSequentially;
-import me.eiad.vromgame.rules.*;
+import me.eiad.vromgame.rules.race_rule.*;
 
 import java.util.*;
 
@@ -18,7 +18,7 @@ public class Race {
     private final int rounds;
     @Getter
     private final List<Track> tracks;
-    private final List<Rule> rules = new ArrayList<>();
+    private final List<RaceRule> raceRules = new ArrayList<>();
     private final Map<Integer, Map<Car, Double>> resultOFRace = new HashMap<>();
     private final Map<Integer, Map<Car, Report>> carReport = new HashMap<>();
     private Car winner;
@@ -27,10 +27,10 @@ public class Race {
     private Car loser;
 
     public Race(List<Car> cars, int rounds, List<Track> tracks) {
-        rules.add(new NumberOfCarsValidation());
-        rules.add(new RoundValidation());
-        rules.add(new TrackValidation());
-        rules.add(new CarsEqual());
+        raceRules.add(new NumberOfCarsValidation());
+        raceRules.add(new RoundValidation());
+        raceRules.add(new TrackValidation());
+        raceRules.add(new CarsEqual());
         this.cars = cars;
         this.rounds = rounds;
         this.tracks = tracks;
@@ -64,8 +64,8 @@ public class Race {
     }
 
     private void checkIfValid() {
-        for (Rule rule : rules) {
-            rule.isValid(this);
+        for (RaceRule raceRule : raceRules) {
+            raceRule.isValid(this);
         }
     }
 
