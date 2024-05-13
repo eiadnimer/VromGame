@@ -47,4 +47,15 @@ public class RewardTest {
 
         Assertions.assertEquals(22.75, carB.getUpgradePoints());
     }
+
+    @Test
+    public void first_round_should_give_less_points_than_the_second_round() {
+        RewardSystemImpl rewardSystemImpl = new RewardSystemImpl(2);
+
+        rewardSystemImpl.segregatePoints(List.of(carA, carB), 1);
+        Assertions.assertEquals(22.75, carB.getUpgradePoints());
+
+        rewardSystemImpl.segregatePoints(List.of(carA, carB), 2);
+        Assertions.assertEquals(56.875, carB.getUpgradePoints());
+    }
 }
